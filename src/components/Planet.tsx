@@ -1,3 +1,4 @@
+// src\components\Planet.tsx
 type PlanetProps = {
   color?: string;
   position?: [number, number, number];

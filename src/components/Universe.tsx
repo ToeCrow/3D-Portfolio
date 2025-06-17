@@ -1,3 +1,4 @@
+//src\components\Universe.tsx
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import Sun from './Sun';

@@ -1,3 +1,4 @@
+//src\components\Sun.tsx
 import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 
