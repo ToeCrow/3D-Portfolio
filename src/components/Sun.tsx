@@ -22,7 +22,7 @@ const Sun = () => {
       {/* Eventuell snurrande glow ovanpå */}
       <mesh ref={glowRef}>
         <sphereGeometry args={[2.5, 64, 64]} />
-        <meshBasicMaterial color="orange" transparent opacity={0.1} />
+        <meshBasicMaterial color="orange" transparent opacity={0.4} />
       </mesh>
     </group>
   );
