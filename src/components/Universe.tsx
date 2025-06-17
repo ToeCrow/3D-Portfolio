@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import Sun from './sun';
-import Planet from './planet';
+import Sun from './Sun';
+import Planet from './Planet';
 import { Group } from 'three';
 
 const Universe = () => {
