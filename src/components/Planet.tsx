@@ -1,7 +1,6 @@
-import { useRef } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useRef, useMemo } from 'react';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei';
 
 type PlanetProps = {
   name: string;
@@ -13,63 +12,68 @@ type PlanetProps = {
 
 const Planet = ({ name, color, index, orbitalPeriodDays, radiuskm }: PlanetProps) => {
   const groupRef = useRef<THREE.Group>(null);
-  const textRef = useRef<THREE.Mesh>(null);
-  const { camera } = useThree();
+  const meshRef = useRef<THREE.Mesh>(null);
 
   const earthRadiusKm = 6371;
-  const earthSize = 1.15; // Jordens storlek i din skala
-  const maxSize = 2; // Maxstorlek för en planet i din skala
-
-  // Proportionell skala baserad på planetens verkliga radie jämfört med jorden
-  let size = (radiuskm / earthRadiusKm) * earthSize;
-
-  // Begränsa storleken till maxSize
-  if (size > maxSize) size = maxSize;
-
-  // Minsta storlek så den syns lite bättre (valfritt)
+  const earthSize = 1.15;
+  const maxSize = 2;
   const minSize = 0.3;
+  let size = (radiuskm / earthRadiusKm) * earthSize;
+  if (size > maxSize) size = maxSize;
   if (size < minSize) size = minSize;
 
-  // Avstånd från solen, justerat för index så att planeter lägger sig i rad
   const radius = 5 + index * 2.5;
 
-  // Orbital hastighet baserat på orbital_period_days
   const baseDays = 365;
-  const baseDuration = 15; // sekunder för jorden
+  const baseDuration = 15;
   const speed = (2 * Math.PI) / baseDuration * (baseDays / orbitalPeriodDays);
 
+  // Skapa textur med namn inbäddat
+  const texture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 42px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(name, canvas.width / 2, canvas.height / 2);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(2, 1); // duplicera texten runt planeten
+    return tex;
+  }, [name, color]);
+
+  // Snurra planeten runt solen + egen rotation
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    const angle = -t * speed; // Motsols
+    const angle = -t * speed;
 
     const x = Math.cos(angle + index) * radius;
     const z = Math.sin(angle + index) * radius;
 
     if (groupRef.current) {
       groupRef.current.position.set(x, 0, z);
-      groupRef.current.rotation.y = angle;
+      groupRef.current.rotation.y = angle; // för orbital rörelse
     }
 
-    if (textRef.current) {
-      textRef.current.lookAt(camera.position);
+    if (meshRef.current) {
+      meshRef.current.rotation.y = t * 0.2; // planetens egen snurr
     }
   });
 
   return (
     <group ref={groupRef}>
-      <mesh>
-        <sphereGeometry args={[size, 32, 32]} />
-        <meshStandardMaterial color={color} />
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[size, 64, 64]} />
+        <meshStandardMaterial map={texture} />
       </mesh>
-      <Text
-        ref={textRef}
-        fontSize={0.25}
-        position={[0, size + 0.3, 0]}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {name}
-      </Text>
     </group>
   );
 };
