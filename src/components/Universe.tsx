@@ -28,7 +28,6 @@ const Universe = () => {
           name={project.name}
           color={project.color}
           index={idx}
-          total={projects.length}
           orbitalPeriodDays={project.orbital_period_days}
         />
       ))}
