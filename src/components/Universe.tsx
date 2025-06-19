@@ -6,6 +6,7 @@ type Project = {
   id: number;
   name: string;
   color: string;
+  orbital_period_days: number;
 };
 
 const Universe = () => {
@@ -28,6 +29,7 @@ const Universe = () => {
           color={project.color}
           index={idx}
           total={projects.length}
+          orbitalPeriodDays={project.orbital_period_days}
         />
       ))}
     </>

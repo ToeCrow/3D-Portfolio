@@ -1,6 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRef } from 'react';
-import * as THREE from 'three';
 
 const CameraController = () => {
   const { camera } = useThree();
@@ -9,7 +8,7 @@ const CameraController = () => {
   useFrame((_, delta) => {
     angleRef.current += delta * 0.02; // 0.1 = rotationshastighet
 
-    const radius = 15; // avstånd från solen
+    const radius = 24; // avstånd från solen
     const x = Math.sin(angleRef.current) * radius;
     const z = Math.cos(angleRef.current) * radius;
 

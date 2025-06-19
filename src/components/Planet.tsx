@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
 
@@ -7,26 +7,35 @@ type PlanetProps = {
   name: string;
   color: string;
   index: number;
-  total: number;
+  orbitalPeriodDays: number;
 };
 
-const Planet = ({ name, color, index, total }: PlanetProps) => {
+const Planet = ({ name, color, index, orbitalPeriodDays }: PlanetProps) => {
   const groupRef = useRef<THREE.Group>(null);
-  const size = 0.5 + name.length * 0.05; // storlek baserat på namn
-  const radius = 5 + index * 2.5; // olika avstånd
-  const duration = 20; // alla varv = 20s
+  const textRef = useRef<THREE.Mesh>(null);
+  const { camera } = useThree();
 
-  const speed = (2 * Math.PI) / duration;
+  const size = 0.5 + name.length * 0.05;
+  const radius = 5 + index * 2.5;
+
+  const baseDays = 365;
+  const baseDuration = 20; // sekunder för Jorden
+  const speed = (2 * Math.PI) / baseDuration * (baseDays / orbitalPeriodDays);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    const angle = t * speed;
+    const angle = -t * speed; // Motsols
+
     const x = Math.cos(angle + index) * radius;
     const z = Math.sin(angle + index) * radius;
 
     if (groupRef.current) {
       groupRef.current.position.set(x, 0, z);
-      groupRef.current.rotation.y = -angle - index;
+      groupRef.current.rotation.y = angle;
+    }
+
+    if (textRef.current) {
+      textRef.current.lookAt(camera.position);
     }
   });
 
@@ -37,9 +46,9 @@ const Planet = ({ name, color, index, total }: PlanetProps) => {
         <meshStandardMaterial color={color} />
       </mesh>
       <Text
+        ref={textRef}
         fontSize={0.25}
         position={[0, size + 0.3, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
         anchorX="center"
         anchorY="middle"
       >
