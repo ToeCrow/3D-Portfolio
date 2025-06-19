@@ -1,25 +1,31 @@
 import { useRef } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 const Sun = () => {
   const glowRef = useRef<THREE.Mesh>(null);
+  const imageRef = useRef<THREE.Mesh>(null);
   const texture = useLoader(THREE.TextureLoader, '/your-image.jpg');
+  const { camera } = useThree();
 
   useFrame(() => {
-    // Snurra bara glow om du vill
+    // Snurra glow som tidigare
     if (glowRef.current) glowRef.current.rotation.y += 0.01;
+
+    // Gör att bilden alltid pekar mot kameran (billboarding)
+    if (imageRef.current) {
+      // Vänd mesh mot kameran
+      imageRef.current.lookAt(camera.position);
+    }
   });
 
   return (
     <group>
-      {/* Rund platt bild (istället för planeGeometry) */}
-      <mesh>
-        <circleGeometry args={[2.5, 64]} /> {/* radius = 2.5 → diameter = 5 */}
+      <mesh ref={imageRef}>
+        <circleGeometry args={[2.5, 64]} />
         <meshBasicMaterial map={texture} transparent />
       </mesh>
 
-      {/* Eventuell snurrande glow ovanpå */}
       <mesh ref={glowRef}>
         <sphereGeometry args={[2.5, 64, 64]} />
         <meshBasicMaterial color="orange" transparent opacity={0.4} />
