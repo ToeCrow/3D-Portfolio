@@ -1,17 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Sun from './Sun';
 import Planet from './Planet';
+import TeslaOrbit from './TeslaOrbit';
+import * as THREE from 'three';
 
 type Project = {
   id: number;
   name: string;
   color: string;
   orbital_period_days: number;
-  radiuskm: number; 
+  radiuskm: number;
 };
 
 const Universe = () => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const thirdPlanetRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
     fetch('/api/projects')
@@ -26,13 +29,15 @@ const Universe = () => {
       {projects.map((project, idx) => (
         <Planet
           key={project.id}
+          ref={idx === 2 ? thirdPlanetRef : null}
           name={project.name}
           color={project.color}
           index={idx}
           orbitalPeriodDays={project.orbital_period_days}
-          radiuskm={project.radiuskm} 
+          radiuskm={project.radiuskm}
         />
       ))}
+      {thirdPlanetRef.current && <TeslaOrbit centerRef={thirdPlanetRef} />}
     </>
   );
 };

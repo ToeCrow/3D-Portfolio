@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useEffect } from 'react';
 
 const MIN_RADIUS = 10;
-const MAX_RADIUS = 30;
+const MAX_RADIUS = 50;
 
 const CameraController = () => {
   const { camera, gl } = useThree();
