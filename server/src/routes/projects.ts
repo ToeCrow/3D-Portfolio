@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   try {
     const result = await db.query(`
       SELECT id, name, description, github_url, image_url, repo_type, tags, status, created_at, updated_at, color
-      FROM projects
+      FROM projects ORDER BY id ASC
 `);
 res.json(result.rows);
 
