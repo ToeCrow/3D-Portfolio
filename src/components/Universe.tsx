@@ -1,25 +1,35 @@
-//src\components\Universe.tsx
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useEffect, useState } from 'react';
 import Sun from './Sun';
 import Planet from './Planet';
-import { Group } from 'three';
+
+type Project = {
+  id: number;
+  name: string;
+  color: string;
+};
 
 const Universe = () => {
-  const planetGroup = useRef<Group>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
 
-  useFrame(() => {
-    if (planetGroup.current) {
-      planetGroup.current.rotation.y += 0.01;
-    }
-  });
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => setProjects(data))
+      .catch(err => console.error('Failed to load projects', err));
+  }, []);
 
   return (
     <>
       <Sun />
-      <group ref={planetGroup}>
-        <Planet color="orange" position={[5, 0, 0]} />
-      </group>
+      {projects.map((project, idx) => (
+        <Planet
+          key={project.id}
+          name={project.name}
+          color={project.color}
+          index={idx}
+          total={projects.length}
+        />
+      ))}
     </>
   );
 };
