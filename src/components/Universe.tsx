@@ -10,6 +10,7 @@ type Project = {
   color: string;
   orbital_period_days: number;
   radiuskm: number;
+  github_url: string;
 };
 
 const Universe = () => {
@@ -35,6 +36,7 @@ const Universe = () => {
           index={idx}
           orbitalPeriodDays={project.orbital_period_days}
           radiuskm={project.radiuskm}
+          github_url={project.github_url}
         />
       ))}
       {thirdPlanetRef.current && <TeslaOrbit centerRef={thirdPlanetRef} />}
