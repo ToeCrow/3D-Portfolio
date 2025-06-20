@@ -1,20 +1,42 @@
-// components/Tesla.tsx
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useLoader, useFrame } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import * as THREE from 'three';
 
 const Tesla = () => {
-  const model = useLoader(GLTFLoader, '/models/tesla.glb'); // lägg filen i public/models/
+  const model = useLoader(GLTFLoader, '/models/tesla.glb');
   const ref = useRef<THREE.Group>(null);
 
   useFrame(({ clock }) => {
     if (ref.current) {
-      ref.current.rotation.y = clock.getElapsedTime() * 1.5; // egen rotation
+      ref.current.rotation.y = clock.getElapsedTime() * 1.5;
     }
   });
 
-  return <primitive ref={ref} object={model.scene} scale={0.25} />;
+  useEffect(() => {
+    const scene = model.scene;
+
+    // Försök hitta bilen (första barn med mesh)
+    const mesh = scene.getObjectByProperty('type', 'Mesh');
+    if (mesh) {
+      // Centrera modellen så att den snurrar runt sin egen mitt
+      const box = new THREE.Box3().setFromObject(mesh);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      mesh.position.sub(center); // flytta själva bilen till origo
+
+      console.log('✔️ Tesla size:', box.getSize(new THREE.Vector3()));
+      console.log('🎯 Centered at:', center);
+    }
+  }, [model]);
+
+  return (
+    <primitive
+      ref={ref}
+      object={model.scene}
+      scale={10} // börja med 10 — justera sen
+    />
+  );
 };
 
 export default Tesla;

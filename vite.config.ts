@@ -7,5 +7,8 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:4000', // din backend-port
     },
+    fs: {
+      strict: false, // Tillåter att Vite serverar filer utanför root (inklusive public/)
+    },
   },
 });

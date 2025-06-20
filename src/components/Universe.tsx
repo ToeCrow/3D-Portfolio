@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import Sun from './Sun';
 import Planet from './Planet';
 import TeslaOrbit from './TeslaOrbit';
@@ -18,7 +18,7 @@ const Universe = () => {
   const thirdPlanetRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
-    fetch('/api/projects')
+    fetch('http://localhost:4000/api/projects') // du har din API på port 4000
       .then(res => res.json())
       .then(data => setProjects(data))
       .catch(err => console.error('Failed to load projects', err));
@@ -39,7 +39,13 @@ const Universe = () => {
           github_url={project.github_url}
         />
       ))}
-      {thirdPlanetRef.current && <TeslaOrbit centerRef={thirdPlanetRef} />}
+
+      {/* Tesla ska bara renderas efter att planeten är laddad */}
+      <Suspense fallback={null}>
+        {thirdPlanetRef.current && (
+          <TeslaOrbit centerRef={thirdPlanetRef} />
+        )}
+      </Suspense>
     </>
   );
 };
