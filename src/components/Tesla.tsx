@@ -35,6 +35,8 @@ const Tesla = () => {
       ref={ref}
       object={model.scene}
       scale={10} // börja med 10 — justera sen
+      castShadow
+      receiveShadow
     />
   );
 };

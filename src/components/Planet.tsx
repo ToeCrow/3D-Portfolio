@@ -98,7 +98,7 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
       onPointerOver={() => (document.body.style.cursor = 'pointer')}
       onPointerOut={() => (document.body.style.cursor = 'auto')}
       >
-        <mesh ref={meshRef}>
+        <mesh ref={meshRef} castShadow receiveShadow>
           <sphereGeometry args={[size, 64, 64]} />
           <meshStandardMaterial map={texture} />
         </mesh>
