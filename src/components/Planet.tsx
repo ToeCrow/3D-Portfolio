@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useMemo, useImperativeHandle } from 'react';
+import { forwardRef, useRef, useMemo, useImperativeHandle, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -8,11 +8,12 @@ type PlanetProps = {
   index: number;
   orbitalPeriodDays: number;
   radiuskm: number;
-  github_url?: string; // Lägg till valfri github-url prop
+  github_url?: string;
+  mapUrl?: string;
 };
 
 const Planet = forwardRef<THREE.Group, PlanetProps>(
-  ({ name, color, index, orbitalPeriodDays, radiuskm, github_url }, ref) => {
+  ({ name, color, index, orbitalPeriodDays, radiuskm, github_url, mapUrl }, ref) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
 
@@ -32,43 +33,65 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
     const baseDuration = 20;
     const speed = (2 * Math.PI) / baseDuration * (baseDays / orbitalPeriodDays);
 
-    // Skapa textur med namn inbäddat
-    const texture = useMemo(() => {
+    // State för bas-texturen (bilden)
+    const [baseTexture, setBaseTexture] = useState<THREE.Texture | null>(null);
+
+    // Ladda bas-textur asynkront när mapUrl ändras
+    useEffect(() => {
+      if (!mapUrl) {
+        setBaseTexture(null);
+        return;
+      }
+      const loader = new THREE.TextureLoader();
+      loader.load(
+        mapUrl,
+        (texture) => setBaseTexture(texture),
+        undefined,
+        (err) => {
+          console.error('Failed to load texture:', err);
+          setBaseTexture(null);
+        }
+      );
+    }, [mapUrl]);
+
+    // Kombinera bas-textur och text-textur i en canvas
+    const combinedTexture = useMemo(() => {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
       const ctx = canvas.getContext('2d')!;
 
-      // Måla hela bakgrunden med planetens färg
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Rita bas-textur (om den finns)
+      if (baseTexture && baseTexture.image) {
+        ctx.drawImage(baseTexture.image, 0, 0, canvas.width, canvas.height);
+      } else {
+        // Fyll med planetfärg om ingen bas-textur
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
-      // Skapa skugga för texten så den syns bättre
+      // Rita text ovanpå
       ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
       ctx.shadowBlur = 8;
       ctx.shadowOffsetX = 2;
       ctx.shadowOffsetY = 2;
 
-      // Textinställningar
       ctx.fillStyle = 'white';
       ctx.font = 'bold 48px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Skriv texten mitt på planetens textur
       ctx.fillText(name, canvas.width / 2, canvas.height / 2);
 
-      // Skapa Three.js textur
       const tex = new THREE.CanvasTexture(canvas);
       tex.wrapS = THREE.RepeatWrapping;
       tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(2, 1); // duplicera texten runt planeten
+      tex.repeat.set(2, 1);
       tex.anisotropy = 16;
 
       return tex;
-    }, [name, color]);
+    }, [baseTexture, color, name]);
 
-    // Snurra planeten runt solen + egen rotation
     useFrame(({ clock }) => {
       const t = clock.getElapsedTime();
       const angle = -t * speed;
@@ -78,29 +101,28 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
 
       if (groupRef.current) {
         groupRef.current.position.set(x, 0, z);
-        groupRef.current.rotation.y = angle; // för orbital rörelse
+        groupRef.current.rotation.y = angle;
       }
 
       if (meshRef.current) {
-        meshRef.current.rotation.y = t * -0.2; // planetens egen snurr
+        meshRef.current.rotation.y = t * -0.2;
       }
     });
 
-    // Klickhantering för att öppna github-url i ny flik
     const handleClick = () => {
       if (github_url) window.open(github_url, '_blank');
     };
 
     return (
-      <group 
-      ref={groupRef} 
-      onClick={handleClick} 
-      onPointerOver={() => (document.body.style.cursor = 'pointer')}
-      onPointerOut={() => (document.body.style.cursor = 'auto')}
+      <group
+        ref={groupRef}
+        onClick={handleClick}
+        onPointerOver={() => (document.body.style.cursor = 'pointer')}
+        onPointerOut={() => (document.body.style.cursor = 'auto')}
       >
         <mesh ref={meshRef} castShadow receiveShadow>
           <sphereGeometry args={[size, 64, 64]} />
-          <meshStandardMaterial map={texture} />
+          <meshStandardMaterial map={combinedTexture} />
         </mesh>
       </group>
     );
