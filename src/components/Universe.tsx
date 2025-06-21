@@ -12,6 +12,7 @@ type Project = {
   radiuskm: number;
   github_url: string;
   map_url: string;
+  moons: number;
 };
 
 const Universe = () => {
@@ -39,6 +40,7 @@ const Universe = () => {
           radiuskm={project.radiuskm}
           github_url={project.github_url}
           mapUrl={project.map_url}
+          moons={project.moons}
         />
       ))}
 
