@@ -49,9 +49,6 @@ const Sun = () => {
     canvas.height = 512;
     const ctx = canvas.getContext('2d')!;
 
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     ctx.fillStyle = 'white';
     ctx.font = 'bold 260px Arial'; // Större textstorlek
     ctx.textAlign = 'center';
