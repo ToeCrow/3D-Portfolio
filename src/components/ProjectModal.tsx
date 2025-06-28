@@ -24,7 +24,7 @@ const ProjectModal = ({ project, visible, onClose }: Props) => {
         setFadeOut(true);
         setTimeout(onClose, 400); // match animation duration
       }
-    }, 15000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [visible, hovering, onClose]);
