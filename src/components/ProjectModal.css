@@ -1,0 +1,32 @@
+.project-modal {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  max-width: 50vw;
+  max-height: 50vh;
+  transform: translate(0, 0);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  z-index: 1000;
+  transition: opacity 0.3s ease, transform 0.4s ease;
+  overflow: auto;
+}
+
+.project-modal img {
+  max-width: 100%;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+}
+
+.fade-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateX(2000px) scale(0.5) skewX(20deg) blur(10px);
+  transition: all 0.4s ease-in;
+}

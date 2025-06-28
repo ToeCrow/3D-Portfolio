@@ -15,12 +15,16 @@ type Project = {
   moons: number;
 };
 
-const Universe = () => {
+type UniverseProps = {
+  onPlanetHover?: (data: any) => void; // 👈 Ny prop
+};
+
+const Universe = ({ onPlanetHover }: UniverseProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const thirdPlanetRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/projects') // du har din API på port 4000
+    fetch('http://localhost:4000/api/projects')
       .then(res => res.json())
       .then(data => setProjects(data))
       .catch(err => console.error('Failed to load projects', err));
@@ -41,10 +45,10 @@ const Universe = () => {
           github_url={project.github_url}
           mapUrl={project.map_url}
           moons={project.moons}
+          onHover={onPlanetHover} // 👈 Skickar vidare till App
         />
       ))}
 
-      {/* Tesla ska bara renderas efter att planeten är laddad */}
       <Suspense fallback={null}>
         {thirdPlanetRef.current && (
           <TeslaOrbit centerRef={thirdPlanetRef} />

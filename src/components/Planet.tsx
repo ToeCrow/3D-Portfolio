@@ -18,10 +18,11 @@ type PlanetProps = {
   github_url?: string;
   mapUrl?: string;
   moons?: number;
+  onHover?: (projectData: any) => void; // 👈 Ny prop
 };
 
 const Planet = forwardRef<THREE.Group, PlanetProps>(
-  ({ name, color, index, orbitalPeriodDays, radiuskm, github_url, mapUrl, moons = 0 }, ref) => {
+  ({ name, color, index, orbitalPeriodDays, radiuskm, github_url, mapUrl, moons = 0, onHover }, ref) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
     const moonRefs = useRef<THREE.Mesh[]>([]);
@@ -148,8 +149,15 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
       <group
         ref={groupRef}
         onClick={handleClick}
-        onPointerOver={() => (document.body.style.cursor = 'pointer')}
-        onPointerOut={() => (document.body.style.cursor = 'auto')}
+        onPointerOver={() => {
+          document.body.style.cursor = 'pointer';
+          if (onHover) {
+            onHover({ name, github_url, map_url: mapUrl });
+          }
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = 'auto';
+        }}
       >
         <mesh ref={meshRef} castShadow receiveShadow>
           <sphereGeometry args={[size, 64, 64]} />
