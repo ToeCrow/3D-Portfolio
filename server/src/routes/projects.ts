@@ -1,18 +1,8 @@
 import express from 'express';
-import { fetchRepos } from '../services/github';
 import db from '../db/db';
 
 const router = express.Router();
 
-router.get('/github', async (req, res) => {
-  try {
-    const repos = await fetchRepos();
-    res.json(repos);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Failed to fetch repos');
-  }
-});
 
 router.get('/', async (req, res) => {
   try {
