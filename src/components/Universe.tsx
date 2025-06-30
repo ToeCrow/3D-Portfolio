@@ -37,6 +37,7 @@ const Universe = ({ onPlanetHover }: UniverseProps) => {
         <Planet
           key={project.id}
           ref={idx === 2 ? thirdPlanetRef : null}
+          id={project.id}               // <--- Här!
           name={project.name}
           color={project.color}
           index={idx}
@@ -47,6 +48,7 @@ const Universe = ({ onPlanetHover }: UniverseProps) => {
           moons={project.moons}
           onHover={onPlanetHover} // 👈 Skickar vidare till App
         />
+
       ))}
 
       <Suspense fallback={null}>

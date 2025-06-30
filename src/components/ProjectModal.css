@@ -1,32 +1,79 @@
 .project-modal {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  max-width: 50vw;
-  max-height: 50vh;
-  transform: translate(0, 0);
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  z-index: 1000;
-  transition: opacity 0.3s ease, transform 0.4s ease;
-  overflow: auto;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  color: white;
+  z-index: 9999;
+  box-shadow: 0 0 15px rgba(0,0,0,0.7);
 }
 
-.project-modal img {
+.image-viewer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.project-image {
   max-width: 100%;
-  margin-top: 0.5rem;
-  border-radius: 8px;
+  max-height: 400px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.nav-button {
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 0 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.3s ease;
+}
+
+.nav-button:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.nav-button.prev {
+  margin-right: 10px;
+}
+
+.nav-button.next {
+  margin-left: 10px;
+}
+
+.image-counter {
+  position: absolute;
+  bottom: -25px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 .fade-in {
-  opacity: 1;
-  transform: scale(1);
+  animation: fadeIn 0.4s ease forwards;
 }
 
 .fade-out {
-  opacity: 0;
-  transform: translateX(2000px) scale(0.5) skewX(20deg) blur(10px);
-  transition: all 0.4s ease-in;
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
 }

@@ -10,6 +10,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 type PlanetProps = {
+  id: number;                    // Lägg till id här!
   name: string;
   color: string;
   index: number;
@@ -22,7 +23,21 @@ type PlanetProps = {
 };
 
 const Planet = forwardRef<THREE.Group, PlanetProps>(
-  ({ name, color, index, orbitalPeriodDays, radiuskm, github_url, mapUrl, moons = 0, onHover }, ref) => {
+  (
+    {
+      id,
+      name,
+      color,
+      index,
+      orbitalPeriodDays,
+      radiuskm,
+      github_url,
+      mapUrl,
+      moons = 0,
+      onHover,
+    },
+    ref
+  ) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
     const moonRefs = useRef<THREE.Mesh[]>([]);
@@ -43,7 +58,9 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
     const speed = (2 * Math.PI) / baseDuration * (baseDays / orbitalPeriodDays);
 
     const [baseTexture, setBaseTexture] = useState<THREE.Texture | null>(null);
+    const [images, setImages] = useState<string[]>([]); // Här sparar vi bild-URL:er
 
+    // Hämta planetens bas-textur (mapUrl)
     useEffect(() => {
       if (!mapUrl) {
         setBaseTexture(null);
@@ -60,6 +77,26 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
         }
       );
     }, [mapUrl]);
+
+    // Hämta bilder för planeten via API
+    useEffect(() => {
+      if (!id) return;
+      fetch(`/api/projects/${id}/images`)
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch images');
+          return res.json();
+        })
+        .then((data) => {
+          // Anpassa beroende på hur ditt API returnerar bilder
+          // Här antar jag att varje objekt har en 'url' property
+          const urls = data.map((img: any) => img.url || img.image_url || img.path || '');
+          setImages(urls.filter(Boolean));
+        })
+        .catch((err) => {
+          console.error('Error fetching images:', err);
+          setImages([]);
+        });
+    }, [id]);
 
     const combinedTexture = useMemo(() => {
       const canvas = document.createElement('canvas');
@@ -152,7 +189,7 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
         onPointerOver={() => {
           document.body.style.cursor = 'pointer';
           if (onHover) {
-            onHover({ name, github_url, map_url: mapUrl });
+            onHover({ id, name, github_url, map_url: mapUrl, images }); // Skicka med bilder också
           }
         }}
         onPointerOut={() => {
