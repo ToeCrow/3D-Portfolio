@@ -64,11 +64,15 @@ const ProjectModal = ({ project, visible, onClose }: Props) => {
           <button className="nav-button prev" onClick={prevImage} aria-label="Previous image">
             ‹
           </button>
-          <img
-            src={images[currentIndex]}
-            alt={`${project.name} image ${currentIndex + 1}`}
-            className="project-image"
-          />
+
+          <div className="image-container">
+            <img
+              src={images[currentIndex]}
+              alt={`${project.name} image ${currentIndex + 1}`}
+              className="project-image"
+            />
+          </div>
+
           <button className="nav-button next" onClick={nextImage} aria-label="Next image">
             ›
           </button>

@@ -1,16 +1,20 @@
 .project-modal {
   position: fixed;
-  top: 10%;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
   background: #222;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 900px;
   width: 90%;
+  height: 640px;      /* högre höjd för GitHub-länk */
   color: white;
   z-index: 9999;
   box-shadow: 0 0 15px rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .image-viewer {
@@ -19,13 +23,28 @@
   align-items: center;
   justify-content: center;
   margin: 15px 0;
+  width: 100%;
+  flex: 1;
+}
+
+.image-container {
+  width: 860px;
+  height: 480px;
+  overflow-y: auto;
+  background: #111;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* så att bilden börjar i toppen */
+  padding-top: 10px;
 }
 
 .project-image {
-  max-width: 100%;
-  max-height: 400px;
-  border-radius: 4px;
-  object-fit: contain;
+  width: 100%;       /* alltid lika bred som container */
+  height: auto;      /* höjden anpassas proportionellt */
+  user-select: none;
+  pointer-events: none;
+  border-radius: 8px;
 }
 
 .nav-button {
@@ -37,6 +56,10 @@
   cursor: pointer;
   user-select: none;
   transition: background 0.3s ease;
+  height: 48px;
+  align-self: center;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .nav-button:hover {
@@ -53,11 +76,22 @@
 
 .image-counter {
   position: absolute;
-  bottom: -25px;
+  bottom: -30px;
   width: 100%;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #ccc;
+}
+
+a {
+  color: #59a6ff;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 .fade-in {
