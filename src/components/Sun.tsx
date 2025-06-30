@@ -87,8 +87,19 @@ const Sun = () => {
     }
   });
 
+  const handleClick = () => {
+    window.open('https://www.linkedin.com/in/thomaskronvold', '_blank');
+  };
+
   return (
-    <group>
+    <group onClick={handleClick}
+      onPointerOver={() => {
+          document.body.style.cursor = 'pointer'; // Eller byt till raket-cursor här
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = 'auto';
+        }}
+    >
       <pointLight
         ref={lightRef}
         position={[0, 0, 0]}
