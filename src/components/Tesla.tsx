@@ -24,9 +24,6 @@ const Tesla = () => {
       const center = new THREE.Vector3();
       box.getCenter(center);
       mesh.position.sub(center); // flytta själva bilen till origo
-
-      console.log('✔️ Tesla size:', box.getSize(new THREE.Vector3()));
-      console.log('🎯 Centered at:', center);
     }
   }, [model]);
 
