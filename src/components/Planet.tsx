@@ -59,6 +59,7 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
 
     const [baseTexture, setBaseTexture] = useState<THREE.Texture | null>(null);
     const [images, setImages] = useState<string[]>([]); // Här sparar vi bild-URL:er
+    const [descriptions, setDescriptions] = useState<string[]>([]);
 
     // Hämta planetens bas-textur (mapUrl)
     useEffect(() => {
@@ -80,23 +81,19 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
 
     // Hämta bilder för planeten via API
     useEffect(() => {
-      if (!id) return;
-      fetch(`/api/projects/${id}/images`)
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed to fetch images');
-          return res.json();
-        })
-        .then((data) => {
-          // Anpassa beroende på hur ditt API returnerar bilder
-          // Här antar jag att varje objekt har en 'url' property
-          const urls = data.map((img: any) => img.url || img.image_url || img.path || '');
-          setImages(urls.filter(Boolean));
-        })
-        .catch((err) => {
-          console.error('Error fetching images:', err);
-          setImages([]);
-        });
-    }, [id]);
+  if (!id) return;
+  fetch(`/api/projects/${id}/images`)
+    .then(res => res.json())
+    .then(data => {
+      setImages(data.map((img: any) => img.url || img.image_url || img.path || '').filter(Boolean));
+      setDescriptions(data.map((img: any) => img.description || ''));
+    })
+    .catch(err => {
+      console.error(err);
+      setImages([]);
+      setDescriptions([]);
+    });
+}, [id]);
 
     const combinedTexture = useMemo(() => {
       const canvas = document.createElement('canvas');
@@ -189,7 +186,7 @@ const Planet = forwardRef<THREE.Group, PlanetProps>(
         onPointerOver={() => {
           document.body.style.cursor = 'pointer';
           if (onHover) {
-            onHover({ id, name, github_url, map_url: mapUrl, images }); // Skicka med bilder också
+            onHover({ id, name, github_url, map_url: mapUrl, images, descriptions }); // Skicka med bilder också
           }
         }}
         onPointerOut={() => {

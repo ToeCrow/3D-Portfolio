@@ -18,8 +18,8 @@
 }
 
 .image-viewer {
-  position: relative;
   display: flex;
+  flex-direction: column; /* staplar pil+bild och text */
   align-items: center;
   justify-content: center;
   margin: 15px 0;
@@ -27,24 +27,43 @@
   flex: 1;
 }
 
+.image-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 860px;      /* samma bredd som bilden + pilar */
+  gap: 12px;
+}
+
 .image-container {
-  width: 860px;
+  width: 780px;       /* lämna plats för pilar på sidorna */
   height: 480px;
-  overflow-y: auto;
+  overflow-y: auto;   /* scroll på bild */
   background: #111;
   border-radius: 10px;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* så att bilden börjar i toppen */
+  align-items: flex-start; /* börja från toppen */
   padding-top: 10px;
 }
 
 .project-image {
-  width: 100%;       /* alltid lika bred som container */
-  height: auto;      /* höjden anpassas proportionellt */
+  width: 100%;        /* lika bred som container */
+  height: auto;
   user-select: none;
   pointer-events: none;
   border-radius: 8px;
+  display: block;
+}
+
+.image-description {
+  margin-top: 12px;
+  color: #ccc;
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 780px;   /* samma bredd som pilar + bild */
+  word-wrap: break-word;
+  user-select: text;
 }
 
 .nav-button {
@@ -57,21 +76,15 @@
   user-select: none;
   transition: background 0.3s ease;
   height: 48px;
-  align-self: center;
   border-radius: 6px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-button:hover {
   background: rgba(0,0,0,0.9);
-}
-
-.nav-button.prev {
-  margin-right: 10px;
-}
-
-.nav-button.next {
-  margin-left: 10px;
 }
 
 .image-counter {

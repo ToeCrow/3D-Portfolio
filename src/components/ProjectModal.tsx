@@ -6,7 +6,8 @@ type Props = {
     id: number;
     name: string;
     github_url?: string;
-    images?: string[];  // bilder hämtade i parent via fetch
+    images?: string[];      // bilder hämtade i parent via fetch
+    descriptions?: string[]; // beskrivningar till bilder
   };
   visible: boolean;
   onClose: () => void;
@@ -42,6 +43,7 @@ const ProjectModal = ({ project, visible, onClose }: Props) => {
   if (!visible && !fadeOut) return null;
 
   const images = project.images || [];
+  const descriptions = project.descriptions || [];
 
   const prevImage = () => {
     setCurrentIndex((i) => (i === 0 ? images.length - 1 : i - 1));
@@ -56,26 +58,48 @@ const ProjectModal = ({ project, visible, onClose }: Props) => {
       className={`project-modal ${fadeOut ? 'fade-out' : 'fade-in'}`}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
     >
-      <h2>{project.name}</h2>
+      <h2 id="modal-title">{project.name}</h2>
 
       {images.length > 0 ? (
         <div className="image-viewer">
-          <button className="nav-button prev" onClick={prevImage} aria-label="Previous image">
-            ‹
-          </button>
+          <div className="image-controls">
+            <button
+              className="nav-button prev"
+              onClick={prevImage}
+              aria-label="Previous image"
+              type="button"
+            >
+              ‹
+            </button>
 
-          <div className="image-container">
-            <img
-              src={images[currentIndex]}
-              alt={`${project.name} image ${currentIndex + 1}`}
-              className="project-image"
-            />
+            {/* Scrollbar ENDAST på bilden */}
+            <div className="image-container">
+              <img
+                src={images[currentIndex]}
+                alt={`${project.name} image ${currentIndex + 1}`}
+                className="project-image"
+              />
+            </div>
+
+            <button
+              className="nav-button next"
+              onClick={nextImage}
+              aria-label="Next image"
+              type="button"
+            >
+              ›
+            </button>
           </div>
 
-          <button className="nav-button next" onClick={nextImage} aria-label="Next image">
-            ›
-          </button>
+          {/* Beskrivningen ligger UTANFÖR scrollbaren, under */}
+          <p className="image-description">
+            {descriptions[currentIndex] || ''}
+          </p>
+
           <div className="image-counter">
             {currentIndex + 1} / {images.length}
           </div>
