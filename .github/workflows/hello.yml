@@ -1,0 +1,21 @@
+name: Hello CI
+
+# Trigger på alla pushes (för felsökning)
+on: 
+  push:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Hämta koden
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Skriv ett meddelande i loggen
+      - name: Say Hello
+        run: echo "Hello CI is running!"
+
+      # 3. Visa branch (valfritt, för felsökning)
+      - name: Show current branch
+        run: git branch
